@@ -14,6 +14,13 @@ public class SpawnManager : MonoBehaviour
     [SerializeField]
     private GameObject[] powerups;
     private Player _player;
+    
+    // Player movement bounds: x in [-15, 15], y in [-9, 6]
+    private const float SPAWN_MIN_X = -14f;
+    private const float SPAWN_MAX_X = 14f;
+    private const float SPAWN_MIN_Y = -8f;
+    private const float SPAWN_MAX_Y = 5f;
+    
     private void Start()
     {
         _player = GameObject.Find("Player").GetComponent<Player>();
@@ -36,6 +43,11 @@ public class SpawnManager : MonoBehaviour
             Vector3 playerPos = _player.transform.position;
             float spawnX = playerPos.x + Random.Range(-7f, 7f);
             float spawnY = playerPos.y + 8f;
+            
+            // Clamp spawn position to player movement bounds
+            spawnX = Mathf.Clamp(spawnX, SPAWN_MIN_X, SPAWN_MAX_X);
+            spawnY = Mathf.Clamp(spawnY, SPAWN_MIN_Y, SPAWN_MAX_Y);
+            
             Vector3 posToSpawn = new Vector3(spawnX, spawnY, 0);
             
             GameObject newEnemy = Instantiate(_enemyPrefab, posToSpawn, Quaternion.identity);
@@ -54,6 +66,11 @@ public class SpawnManager : MonoBehaviour
             Vector3 playerPos = _player.transform.position;
             float spawnX = playerPos.x + Random.Range(-7f, 7f);
             float spawnY = playerPos.y + 8f;
+            
+            // Clamp spawn position to player movement bounds
+            spawnX = Mathf.Clamp(spawnX, SPAWN_MIN_X, SPAWN_MAX_X);
+            spawnY = Mathf.Clamp(spawnY, SPAWN_MIN_Y, SPAWN_MAX_Y);
+            
             Vector3 posToSpawn = new Vector3(spawnX, spawnY, 0);
 
             int randomIndex = Random.Range(0, powerups.Length);
