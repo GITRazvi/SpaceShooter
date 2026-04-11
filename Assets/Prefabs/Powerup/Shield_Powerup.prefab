@@ -189,6 +189,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _speed: 3
-  _TripleShotPowerup: {fileID: 0}
-  _SpeedPowerup: {fileID: 0}
   _powerupID: 2

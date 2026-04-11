@@ -11,6 +11,8 @@ public class Laser : MonoBehaviour {
     private float _speed = 8.0f;
 
 
+    public float _laserDamage = 1.0f;
+
     private void Update()
     {
         transform.Translate(Vector3.up*_speed*Time.deltaTime);
@@ -22,5 +24,10 @@ public class Laser : MonoBehaviour {
             }
             Destroy(this.gameObject);
         }
+    }
+
+    public void LaserDamage()
+    {
+      _laserDamage += 1.0f;
     }
 }

@@ -6,7 +6,7 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     [SerializeField]
-    private float _speed = 3.5f; // f comes from float 
+    private float _speed = 4.0f;  
     private float _speedMultiplier = 2.0f;
     [SerializeField]
     private GameObject _laserPrefab;
@@ -15,6 +15,7 @@ public class Player : MonoBehaviour
     private float _nextFire = 0.0f;
     [SerializeField]
     private int _lives=3;
+    public int Lives => _lives; // public read-only property for current lives
     private SpawnManager _spawnManager;
     [SerializeField]
     private GameObject _tripleShot;
@@ -34,10 +35,7 @@ public class Player : MonoBehaviour
         transform.position = new Vector3(0,0,0);
         _spawnManager = GameObject.Find("Spawn_Manager").GetComponent<SpawnManager>();
             
-        if (_spawnManager != null)
-        {
-            Debug.Log("The spawn manager is null");
-        }
+
     }
     void Update()
     {
@@ -136,10 +134,11 @@ public class Player : MonoBehaviour
         }
     }
     public void ShieldActive()
-    {
+    {   
+        if(_isShieldActive)
+            return;
         _isShieldActive = true;
         GameObject shieldInstance = Instantiate(_shieldPrefab, transform.position, quaternion.identity);
         shieldInstance.transform.parent = this.transform;
     }
 }
- 
