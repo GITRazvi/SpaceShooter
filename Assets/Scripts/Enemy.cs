@@ -39,7 +39,15 @@ public class Enemy : MonoBehaviour {
             {
                 player.Damage();
             }
-            Destroy(GameObject.FindWithTag("Enemy"));
+
+            // Award points when enemy is destroyed by colliding with player (including when player has shield)
+            Score.Instance.AddScore();
+
+            // Increment kill count for non-laser kills as well
+            count++;
+
+            // Destroy this enemy instance (use this.gameObject instead of FindWithTag)
+            Destroy(this.gameObject);
         }
         else if (other.tag == "Laser")
         {
@@ -53,7 +61,7 @@ public class Enemy : MonoBehaviour {
                     Score.Instance.AddScore();
                     
                     Destroy(other.gameObject);
-                    Destroy(GameObject.FindWithTag("Enemy"));
+                    Destroy(this.gameObject);
                     count++;
                 }
             }
