@@ -108,7 +108,7 @@ public class Player : MonoBehaviour
         if (_isShieldActive == false)
         {
             _lives--;
-            
+            StartCoroutine(DamageFlashRoutine());
         }
         else
         {
@@ -126,6 +126,18 @@ public class Player : MonoBehaviour
             Destroy(this.gameObject);
         }
     }
+
+    IEnumerator DamageFlashRoutine()
+    {
+        SpriteRenderer spriteRenderer = GetComponent<SpriteRenderer>();
+        Color originalColor = spriteRenderer.color;
+        Color transparentColor = new Color(originalColor.r, originalColor.g, originalColor.b, 0.5f);
+        
+        spriteRenderer.color = transparentColor;
+        yield return new WaitForSeconds(_damageCooldown);
+        spriteRenderer.color = originalColor;
+    }
+
     public void TripleShotActive()
     {
         _isTripleShotActive = true;

@@ -4,7 +4,7 @@ using Unity.Mathematics;
 using UnityEngine;
 public class Enemy : MonoBehaviour {
     [SerializeField]
-    private float _speed = 4.0f;
+    private float _speed = 2.0f;
     [SerializeField]
     private float _enemyHP = 1.0f;
     private int count = 0;
@@ -12,7 +12,7 @@ public class Enemy : MonoBehaviour {
     private void Start()
     {
         //starting from 5 seconds into the game, the method will be called every 30 seconds increasing the HP of the enemy by 1.0f, this can be changed and is not final
-        InvokeRepeating(nameof(IncreaseHP),5f,30f);
+        InvokeRepeating(nameof(IncreaseStats),5f,30f);
     }
     private void Update()
     {
@@ -60,8 +60,9 @@ public class Enemy : MonoBehaviour {
         }
     }
 
-    private void IncreaseHP()
+    private void IncreaseStats()
     {
         _enemyHP += 1.0f;
+        _speed += 0.5f;
     }
 }
