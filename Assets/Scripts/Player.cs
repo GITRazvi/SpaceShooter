@@ -70,17 +70,10 @@ public class Player : MonoBehaviour
         {
             transform.Translate(direction * _speed * Time.deltaTime * _speedMultiplier);
         }
-        transform.position = new Vector3(transform.position.x, Mathf.Clamp(transform.position.y, -3.8f, 0), 0);
+        // Allow movement within new bounds: x in [-15,15], y in [-9,6]
+        transform.position = new Vector3(Mathf.Clamp(transform.position.x, -15f, 15f), Mathf.Clamp(transform.position.y, -9f, 6f), 0);
 
-        if (transform.position.x >= 11)
-        {
-            transform.position = new Vector3(-11, transform.position.y, transform.position.z);
-        }
-        else if (transform.position.x <= -11)
-        {
-            transform.position = new Vector3(11, transform.position.y, transform.position.z);
-        }
-
+        // Removed horizontal wrapping so player stays within the allowed area
     }
     void fireLaser()
     {
