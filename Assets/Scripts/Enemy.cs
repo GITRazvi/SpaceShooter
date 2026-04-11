@@ -11,7 +11,7 @@ public class Enemy : MonoBehaviour {
     private Laser laser;
     private void Start()
     {
-        //starting from 5 seconds, the method will be called every 30 seconds increasing the HP of the enemy by 1.0f
+        //starting from 5 seconds into the game, the method will be called every 30 seconds increasing the HP of the enemy by 1.0f, this can be changed and is not final
         InvokeRepeating(nameof(IncreaseHP),5f,30f);
     }
     private void Update()

@@ -34,8 +34,6 @@ public class Player : MonoBehaviour
     {
         transform.position = new Vector3(0,0,0);
         _spawnManager = GameObject.Find("Spawn_Manager").GetComponent<SpawnManager>();
-            
-
     }
     void Update()
     {
