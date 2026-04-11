@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Mathematics;
@@ -13,6 +14,9 @@ public class Player : MonoBehaviour
     [SerializeField]
     private float _fireRate = 0.5f;
     private float _nextFire = 0.0f;
+    [SerializeField]
+    private float _damageCooldown = 0.5f;
+    private float _nextDamageTime = 0.0f;
     [SerializeField]
     private int _lives=3;
     public int Lives => _lives; // public read-only property for current lives
@@ -32,9 +36,18 @@ public class Player : MonoBehaviour
 
     void Start()
     {
+        //Increase the speed of the player every 30 seconds, starting from 5 seconds into the game, this can be changed and is not final just for balancing purposes
+        InvokeRepeating(nameof(IncreaseSpeed),5f,30f);
         transform.position = new Vector3(0,0,0);
         _spawnManager = GameObject.Find("Spawn_Manager").GetComponent<SpawnManager>();
     }
+
+    void IncreaseSpeed()
+        {
+            _speed += 0.5f;
+        }   
+
+
     void Update()
     {
         calculateMovement();
@@ -85,9 +98,19 @@ public class Player : MonoBehaviour
 
     public void Damage()
     {
+        if (Time.time < _nextDamageTime)
+        {
+            return; // Cooldown is still active, ignore damage
+        }
+        
+        _nextDamageTime = Time.time + _damageCooldown;
+        
         if (_isShieldActive == false)
+        {
             _lives--;
-        else 
+            
+        }
+        else
         {
             _isShieldActive = false;
             Transform shield = transform.Find(_shieldPrefab.name + "(Clone)");
@@ -95,7 +118,7 @@ public class Player : MonoBehaviour
             {
                 Destroy(shield.gameObject);
             }
-            return; 
+            return;
         }
         if (_lives < 1)
         {
