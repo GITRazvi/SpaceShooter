@@ -28,7 +28,6 @@ public class Camera : MonoBehaviour
             }
         }
         
-        // Set initial offset based on follow distance
         _offset = new Vector3(0, 0, -_followDistance);
     }
 
@@ -37,10 +36,8 @@ public class Camera : MonoBehaviour
         if (_playerTransform == null)
             return;
 
-        // Calculate target position
         Vector3 targetPosition = _playerTransform.position + _offset;
         
-        // Smoothly move camera towards target position
         transform.position = Vector3.Lerp(transform.position, targetPosition, _smoothSpeed * Time.deltaTime);
     }
 }
