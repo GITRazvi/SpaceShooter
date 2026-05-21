@@ -7,8 +7,9 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     [SerializeField]
-    private float _speed = 4.0f;  
+    private float _speed = 4.5f;
     private float _speedMultiplier = 2.0f;
+    private float _bossFightSpeedBoost = 1.0f;
     [SerializeField]
     private GameObject _laserPrefab;
     [SerializeField]
@@ -64,24 +65,33 @@ public class Player : MonoBehaviour
         float horizontalInput = Input.GetAxis("Horizontal");
         float verticalInput = Input.GetAxis("Vertical");
         Vector3 direction = new Vector3(horizontalInput, verticalInput, 0);
+
+        float currentSpeed = _speed;
+
+        // Add boss fight speed boost
+        if (_spawnManager != null && _spawnManager.IsBossFight())
+        {
+            currentSpeed += _bossFightSpeedBoost;
+        }
+
         if(_isSpeedupActive == false)
-            transform.Translate(direction * _speed * Time.deltaTime);
+            transform.Translate(direction * currentSpeed * Time.deltaTime);
         else
         {
-            transform.Translate(direction * _speed * Time.deltaTime * _speedMultiplier);
+            transform.Translate(direction * currentSpeed * Time.deltaTime * _speedMultiplier);
         }
 
-        // Wrap horizontally at x = -14 and x = 14, clamp vertical movement to y in [-9,6]
+        // Wrap horizontally at x = -24 and x = 24, clamp vertical movement to y in [-19,26]
         float posX = transform.position.x;
-        float posY = Mathf.Clamp(transform.position.y, -9f, 6f);
+        float posY = Mathf.Clamp(transform.position.y, -19f, 26f);
 
-        if (posX <= -14f)
+        if (posX <= -24f)
         {
-            posX = 14f;
+            posX = 24f;
         }
-        else if (posX >= 14f)
+        else if (posX >= 24f)
         {
-            posX = -14f;
+            posX = -24f;
         }
 
         transform.position = new Vector3(posX, posY, 0);
@@ -179,5 +189,24 @@ public class Player : MonoBehaviour
         _isShieldActive = true;
         GameObject shieldInstance = Instantiate(_shieldPrefab, transform.position, quaternion.identity);
         shieldInstance.transform.parent = this.transform;
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        // Handle collision with boss
+        if (collision.CompareTag("Boss"))
+        {
+            Damage();
+        }
+        // Handle collision with enemy projectile
+        else if (collision.CompareTag("EnemyProjectile"))
+        {
+            EnemyProjectile projectile = collision.GetComponent<EnemyProjectile>();
+            if (projectile != null)
+            {
+                Damage();
+                Destroy(collision.gameObject);
+            }
+        }
     }
 }

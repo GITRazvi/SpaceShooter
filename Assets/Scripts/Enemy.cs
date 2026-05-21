@@ -7,12 +7,19 @@ public class Enemy : MonoBehaviour {
     private float _speed = 2.0f;
     [SerializeField]
     private float _enemyHP = 1.0f;
+    [SerializeField]
+    private GameObject _enemyProjectilePrefab;
+    private float _nextFire = 0.0f;
     private int count = 0;
     private Laser laser;
+    private Player _player;
+
     private void Start()
     {
         //starting from 5 seconds into the game, the method will be called every 30 seconds increasing the HP of the enemy by 1.0f, this can be changed and is not final
         InvokeRepeating(nameof(IncreaseStats),5f,30f);
+        _player = GameObject.Find("Player").GetComponent<Player>();
+        _nextFire = Time.time + UnityEngine.Random.Range(0.5f, 1.5f); // Random initial fire delay
     }
     private void Update()
     {
@@ -20,8 +27,9 @@ public class Enemy : MonoBehaviour {
         if (transform.position.y <= -8f)
         {
             transform.position = new Vector3(UnityEngine.Random.Range(-8,8),7 ,0);
-            
+
         }
+
         if (count == 10)
         {
             laser.LaserDamage();
@@ -59,7 +67,7 @@ public class Enemy : MonoBehaviour {
                 {
                     // Award points to the player for destroying the enemy
                     Score.Instance.AddScore();
-                    
+
                     Destroy(other.gameObject);
                     Destroy(this.gameObject);
                     count++;
