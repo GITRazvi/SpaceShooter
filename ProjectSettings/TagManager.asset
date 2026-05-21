@@ -9,6 +9,7 @@ TagManager:
   - TripleShot
   - Boss
   - EnemyProjectile
+  - Slider
   layers:
   - Default
   - TransparentFX
