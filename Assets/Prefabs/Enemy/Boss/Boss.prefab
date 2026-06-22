@@ -3048,7 +3048,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8576939786855017856}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 1, w: -0.00000004371139}
+  m_LocalRotation: {x: 0, y: 0, z: -1, w: 0}
   m_LocalPosition: {x: -4.9741683, y: 11, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -3062,7 +3062,7 @@ Transform:
   - {fileID: 8210869293701087331}
   - {fileID: 5164100497604604800}
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -180}
 --- !u!114 &7780661474071548657
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3075,10 +3075,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a10f8d9b566408845a14f948f786aecf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _initialBossHP: 30
   _bossProjectilePrefab: {fileID: 1749550225210562711, guid: 9469f273ff7b6cc4f891d0478e97c15b, type: 3}
   _fireRate: 1.5
   _hpSliderPrefab: {fileID: 4298928766479375882, guid: 10d3d1d605565ed408b3a9730d62c86f, type: 3}
+  _uiCanvas: {fileID: 0}
 --- !u!50 &4708581299859457869
 Rigidbody2D:
   serializedVersion: 5

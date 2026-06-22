@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine;
 using UnityEngine.UI;
 
 public class BossHPSlider : MonoBehaviour
@@ -9,9 +8,11 @@ public class BossHPSlider : MonoBehaviour
 
     private CanvasGroup _canvasGroup;
 
+    // Flag set when ActivateHPBar is called before Start runs so Start won't overwrite it
+    private bool _externallyActivated = false;
+
     void Start()
     {
-        // If slider not assigned, try to find it on this GameObject or children
         if (_hpSlider == null)
         {
             _hpSlider = GetComponent<Slider>();
@@ -34,12 +35,18 @@ public class BossHPSlider : MonoBehaviour
             Debug.LogError("BossHPSlider: Canvas Group component not found!");
         }
 
-        // Deactivate the HP bar at start
-        DeactivateHPBar();
+        // Deactivate the HP bar at start unless it was already activated externally
+        if (!_externallyActivated)
+        {
+            DeactivateHPBar();
+        }
     }
 
     public void ActivateHPBar(float currentHP, float maxHP)
     {
+        // Mark that an external caller wants this visible so Start won't hide it
+        _externallyActivated = true;
+
         gameObject.SetActive(true);
         UpdateHPBar(currentHP, maxHP);
         ShowHPBar();
@@ -47,6 +54,8 @@ public class BossHPSlider : MonoBehaviour
 
     public void DeactivateHPBar()
     {
+        // Clear external activation flag when deactivating
+        _externallyActivated = false;
         HideHPBar();
         gameObject.SetActive(false);
     }
@@ -72,7 +81,7 @@ public class BossHPSlider : MonoBehaviour
         if (_hpSlider != null)
         {
             _hpSlider.maxValue = maxHP;
-            _hpSlider.value = currentHP;
+            _hpSlider.value = Mathf.Clamp(currentHP, 0f, maxHP);
         }
     }
 }

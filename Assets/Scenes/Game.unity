@@ -404,11 +404,16 @@ MonoBehaviour:
   _enemyContainer: {fileID: 368162029}
   _PowerupContainer: {fileID: 678946702}
   _bossPrefab: {fileID: 8576939786855017856, guid: 9ee258009fe000d4ab8fa3d663c4b7c3, type: 3}
+  _bossContainer: {fileID: 1435556445}
   _bossSpawnTimer: 5
   powerups:
   - {fileID: 8318409160129143224, guid: b2376622e527f8645a3230d6f839909a, type: 3}
   - {fileID: 2837570337428395061, guid: a07af0c68b9df064a8fa0bd8ef75649f, type: 3}
   - {fileID: 9201622708521006520, guid: 4a51cba944bfb1e479a0cebad0731e91, type: 3}
+  _initialBossHP: 30
+  _bossHPIncrement: 30
+  _hpSliderPrefab: {fileID: 4298928766479375882, guid: 10d3d1d605565ed408b3a9730d62c86f, type: 3}
+  _uiCanvas: {fileID: 647822142}
 --- !u!4 &948492819
 Transform:
   m_ObjectHideFlags: 0
@@ -424,6 +429,7 @@ Transform:
   m_Children:
   - {fileID: 368162030}
   - {fileID: 678946703}
+  - {fileID: 1435556446}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &949867892
@@ -674,6 +680,37 @@ MonoBehaviour:
   _smoothSpeed: 5
   _bossZoomDistance: 40
   _zoomTransitionDuration: 1
+--- !u!1 &1435556445
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1435556446}
+  m_Layer: 0
+  m_Name: Boss Container
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1435556446
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1435556445}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 948492819}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1461607939
 GameObject:
   m_ObjectHideFlags: 0

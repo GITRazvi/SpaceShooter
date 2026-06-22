@@ -13,13 +13,27 @@ public class SpawnManager : MonoBehaviour
     [SerializeField]
     private GameObject _bossPrefab;
     [SerializeField]
+    private GameObject _bossContainer; // Parent container for spawned bosses
+    [SerializeField]
     private float _bossSpawnTimer = 30f;
-    private bool _stopSpawning = false;
     [SerializeField]
     private GameObject[] powerups;
+
+    // New: boss HP configuration and UI prefab/canvas
+    [SerializeField]
+    private float _initialBossHP = 30f;
+    [SerializeField]
+    private float _bossHPIncrement = 30f;
+    [SerializeField]
+    private GameObject _hpSliderPrefab;
+    [SerializeField]
+    private Transform _uiCanvas;
+
+    private bool _stopSpawning = false;
     private Player _player;
     private bool _isBossFight = false;
     private GameObject _currentBoss = null;
+    private float _bossSpawnCount = 0f;
     
     // Player movement bounds: x in [-24, 24], y in [-19, 26]
     private const float SPAWN_MIN_X = -23f;
@@ -30,11 +44,7 @@ public class SpawnManager : MonoBehaviour
     private void Start()
     {
         _player = GameObject.Find("Player").GetComponent<Player>();
-        if (_bossPrefab != null)
-        {
-            Debug.Log("Boss prefab found and ready to spawn.");
-        }
-        else
+        if (_bossPrefab == null)
         {
             Debug.LogError("Boss prefab is not assigned in SpawnManager!");
         }
@@ -123,19 +133,87 @@ public class SpawnManager : MonoBehaviour
                 Vector3 spawnPosition = _player.transform.position;
                 spawnPosition.y = _player.transform.position.y + 20f;
 
-                GameObject newBoss = Instantiate(_bossPrefab, spawnPosition, Quaternion.identity);
+                // Use the prefab's rotation so any orientation set on the prefab (e.g. upside-down) is preserved
+                GameObject newBoss = Instantiate(_bossPrefab, spawnPosition, _bossPrefab.transform.rotation);
+
+                // Parent boss to designated boss container if assigned
+                if (_bossContainer != null)
+                {
+                    newBoss.transform.parent = _bossContainer.transform;
+                }
+
                 _currentBoss = newBoss;
                 _isBossFight = true;
 
+                // Calculate boss HP based on spawn count
+                _bossSpawnCount++;
+                float maxHP = _initialBossHP + (_bossSpawnCount - 1) * _bossHPIncrement;
+                float bossHP = maxHP;
+
+                // Set up HP bar for the boss (instantiate under UI Canvas if available)
+                GameObject hpBarInstance = null;
+                BossHPSlider hpSliderComponent = null;
+
+                if (_hpSliderPrefab != null)
+                {
+                    hpBarInstance = Instantiate(_hpSliderPrefab);
+
+                    if (_uiCanvas != null)
+                    {
+                        hpBarInstance.transform.SetParent(_uiCanvas, false);
+                    }
+                    else
+                    {
+                        Canvas foundCanvas = Object.FindAnyObjectByType<Canvas>();
+                        if (foundCanvas != null)
+                        {
+                            hpBarInstance.transform.SetParent(foundCanvas.transform, false);
+                        }
+                        else
+                        {
+                            Debug.LogWarning("SpawnManager: No UI Canvas assigned and none found in scene. HP bar will be in root of scene hierarchy.");
+                        }
+                    }
+
+                    hpSliderComponent = hpBarInstance.GetComponent<BossHPSlider>();
+                    if (hpSliderComponent == null)
+                    {
+                        Debug.LogError("SpawnManager: HP slider prefab does not have BossHPSlider component!");
+                    }
+                }
+                else
+                {
+                    Debug.LogWarning("SpawnManager: _hpSliderPrefab is not assigned. Boss will have no HP bar.");
+                }
+
+                // Notify the boss behaviour that it has been spawned
                 BossBehaviour bossBehaviour = newBoss.GetComponent<BossBehaviour>();
                 if (bossBehaviour != null)
                 {
                     bossBehaviour.SetPlayerReference(_player);
                     bossBehaviour.SetSpawnManager(this);
-                    bossBehaviour.InitializeBoss();
+                    bossBehaviour.OnSpawned(bossHP, maxHP, hpBarInstance, hpSliderComponent, _bossSpawnCount);
                 }
 
-                Debug.Log("Boss spawned!");
+                // Notify camera to zoom out for boss fight
+                GameObject cameraObj = GameObject.Find("Main Camera");
+                if (cameraObj != null)
+                {
+                    var cameraScript = cameraObj.GetComponent<Camera>();
+                    if (cameraScript != null)
+                    {
+                        cameraScript.ZoomOutForBoss();
+                    }
+                    else
+                    {
+                        Debug.LogError("SpawnManager: Camera component not found on Main Camera!");
+                    }
+                }
+                else
+                {
+                    Debug.LogError("SpawnManager: Main Camera not found!");
+                }
+
             }
             else if (_currentBoss == null)
             {

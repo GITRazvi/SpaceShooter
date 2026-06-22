@@ -3,22 +3,24 @@ using System.Collections;
 
 public class BossBehaviour : MonoBehaviour
 {
-    [SerializeField]
-    private float _initialBossHP = 30f;
+    //[SerializeField]
+    //private float _initialBossHP = 30f; // kept for inspector reference but SpawnManager will provide actual values
     [SerializeField]
     private GameObject _bossProjectilePrefab;
     [SerializeField]
     private float _fireRate = 1.5f;
     [SerializeField]
     private GameObject _hpSliderPrefab;
+    [SerializeField]
+    private Transform _uiCanvas; 
 
-    private float _currentTime = 0f;
     private float _bossHP;
+    private float _maxHP;
     private float _spawnCount = 0f;
     private float _nextFire = 0.0f;
     private Player _player;
     private bool _hasSpawned = false;
-    private SpawnManager _spawnManager;
+    private SpawnManager _spawn_manager;
     private BossHPSlider _hpSlider;
     private GameObject _hpSliderInstance;
 
@@ -29,7 +31,7 @@ public class BossBehaviour : MonoBehaviour
 
     public void SetSpawnManager(SpawnManager spawnManager)
     {
-        _spawnManager = spawnManager;
+        _spawn_manager = spawnManager;
     }
 
     void Update()
@@ -63,58 +65,21 @@ public class BossBehaviour : MonoBehaviour
         }
     }
 
-    private void SpawnBoss()
+    // Called by SpawnManager after it instantiates and parents the boss and HP bar
+    public void OnSpawned(float bossHP, float maxHP, GameObject hpBarInstance, BossHPSlider hpSliderComponent, float spawnCount)
     {
-        _spawnCount++;
-        _bossHP = _initialBossHP + (_spawnCount - 1) * 30f;
+        _spawnCount = spawnCount;
+        _bossHP = bossHP;
+        _maxHP = maxHP;
+        _hpSliderInstance = hpBarInstance;
+        _hpSlider = hpSliderComponent;
         _hasSpawned = true;
 
-        // Position boss above player
-        if (_player != null)
+        // Ensure HP bar shows correct values
+        if (_hpSlider != null)
         {
-            Vector3 spawnPosition = _player.transform.position;
-            spawnPosition.y = _player.transform.position.y + 20f;
-            transform.position = spawnPosition;
+            _hpSlider.ActivateHPBar(_bossHP, _maxHP);
         }
-
-        // Rotate boss 180 degrees to be upside down
-        transform.rotation = Quaternion.Euler(0, 0, 180f);
-
-        // Spawn and show boss HP bar
-        if (_hpSliderPrefab != null)
-        {
-            _hpSliderInstance = Instantiate(_hpSliderPrefab);
-            _hpSlider = _hpSliderInstance.GetComponent<BossHPSlider>();
-            if (_hpSlider != null)
-            {
-                Debug.Log("BossBehaviour: Activating HP bar");
-                _hpSlider.ActivateHPBar(_bossHP, _initialBossHP + (_spawnCount - 1) * 30f);
-            }
-            else
-            {
-                Debug.LogError("BossBehaviour: HP slider prefab does not have BossHPSlider component!");
-            }
-        }
-        else
-        {
-            Debug.LogError("BossBehaviour: _hpSliderPrefab is not assigned in the Inspector!");
-        }
-
-        // Notify camera to zoom out
-        Camera cameraScript = GameObject.Find("Main Camera").GetComponent<Camera>();
-        if (cameraScript != null)
-        {
-            cameraScript.ZoomOutForBoss();
-        }
-        else
-        {
-            Debug.LogError("Main Camera not found!");
-        }
-    }
-
-    public void InitializeBoss()
-    {
-        SpawnBoss();
     }
 
     public float GetHP()
@@ -129,7 +94,7 @@ public class BossBehaviour : MonoBehaviour
         // Update HP bar
         if (_hpSlider != null)
         {
-            _hpSlider.UpdateHPBar(_bossHP, _initialBossHP + (_spawnCount - 1) * 30f);
+            _hpSlider.UpdateHPBar(_bossHP, _maxHP);
         }
 
         if (_bossHP <= 0)
@@ -142,20 +107,25 @@ public class BossBehaviour : MonoBehaviour
     {
         gameObject.SetActive(false);
         _hasSpawned = false;
-        _currentTime = 0f;
 
         // Destroy HP bar
         if (_hpSliderInstance != null)
         {
-            Debug.Log("BossBehaviour: Deactivating HP bar");
+            
             Destroy(_hpSliderInstance);
             _hpSliderInstance = null;
             _hpSlider = null;
         }
 
-        if (_spawnManager != null)
+        // Award points for defeating the boss
+        if (Score.Instance != null)
         {
-            _spawnManager.OnBossDefeated();
+            Score.Instance.AddScore(100);
+        }
+
+        if (_spawn_manager != null)
+        {
+            _spawn_manager.OnBossDefeated();
         }
     }
 

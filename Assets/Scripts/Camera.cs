@@ -10,7 +10,7 @@ public class Camera : MonoBehaviour
     [SerializeField]
     private float _smoothSpeed = 5f;
     [SerializeField]
-    private float _bossZoomDistance = 15f;
+    private float _bossZoomDistance = 25f;
     [SerializeField]
     private float _zoomTransitionDuration = 1f;
 
@@ -51,7 +51,7 @@ public class Camera : MonoBehaviour
 
     public void ZoomOutForBoss()
     {
-        Debug.Log("ZoomOutForBoss() called!");
+        
         StopCoroutine(nameof(SmoothZoomTransition));
         StartCoroutine(SmoothZoomTransition(_bossZoomDistance));
     }
@@ -61,19 +61,19 @@ public class Camera : MonoBehaviour
         float startDistance = Mathf.Abs(_offset.z);
         float elapsedTime = 0f;
 
-        Debug.Log($"Starting zoom transition: startDistance={startDistance}, targetDistance={targetDistance}");
+      
 
         while (elapsedTime < _zoomTransitionDuration)
         {
             elapsedTime += Time.deltaTime;
             float newDistance = Mathf.Lerp(startDistance, targetDistance, elapsedTime / _zoomTransitionDuration);
             _offset = new Vector3(0, 0, -newDistance);
-            Debug.Log($"Zoom progress: {elapsedTime / _zoomTransitionDuration:P0}, offset.z={_offset.z}");
+           
             yield return null;
         }
 
         // Ensure final position is exact
         _offset = new Vector3(0, 0, -targetDistance);
-        Debug.Log($"Zoom complete! Final offset.z={_offset.z}");
+        
     }
 }
